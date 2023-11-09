@@ -34,8 +34,9 @@ fun Route.userRouting() {
             val userId = makeId()
             val user = call.receive<User>().copy(id = userId)
             fakeDB.add(user)
+
             call.respondText(
-                "User stored correctly, id = $userId",
+                userId,
                 status = HttpStatusCode.Created
             )
         }
