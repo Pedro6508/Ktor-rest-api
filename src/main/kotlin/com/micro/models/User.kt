@@ -1,7 +1,6 @@
 package com.micro.models
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 
 @Serializable
 data class User(
@@ -10,7 +9,7 @@ data class User(
     val email: String
 )
 
-val fakeDB = mutableListOf<User>(
+val usersFakeDB = mutableListOf<User>(
     User(
         id = makeId(),
         name = "Pedro",

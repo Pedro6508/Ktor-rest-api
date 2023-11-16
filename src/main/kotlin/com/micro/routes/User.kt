@@ -1,7 +1,7 @@
 package com.micro.routes
 
 import com.micro.models.User
-import com.micro.models.fakeDB
+import com.micro.models.usersFakeDB
 import com.micro.models.makeId
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -10,12 +10,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.userRouting() {
+    // localhost.8080:/user
     route("/user") {
         get {
-            if (fakeDB.isEmpty()) {
+            if (usersFakeDB.isEmpty()) {
                 call.respondText("No users found", status = HttpStatusCode.OK)
             } else {
-                call.respond(fakeDB)
+                call.respond(usersFakeDB)
             }
         }
         get("{id?}") {
@@ -24,7 +25,7 @@ fun Route.userRouting() {
                 status = HttpStatusCode.BadRequest
             )
             val user =
-                fakeDB.find { u -> u.id == id } ?: return@get call.respondText(
+                usersFakeDB.find { u -> u.id == id } ?: return@get call.respondText(
                     "No user with $id",
                     status = HttpStatusCode.NotFound
                 )
@@ -33,7 +34,7 @@ fun Route.userRouting() {
         post {
             val userId = makeId()
             val user = call.receive<User>().copy(id = userId)
-            fakeDB.add(user)
+            usersFakeDB.add(user)
 
             call.respondText(
                 userId,
@@ -43,7 +44,7 @@ fun Route.userRouting() {
         delete("{id?}") {
             val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
 
-            if (fakeDB.removeIf { u -> u.id == id }) {
+            if (usersFakeDB.removeIf { u -> u.id == id }) {
                 call.respondText(
                     "User removed correctly",
                     status = HttpStatusCode.Accepted

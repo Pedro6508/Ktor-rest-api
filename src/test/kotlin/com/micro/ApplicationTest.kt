@@ -1,7 +1,7 @@
 package com.micro
 
 import com.micro.models.User
-import com.micro.models.fakeDB
+import com.micro.models.usersFakeDB
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -13,7 +13,7 @@ import kotlin.test.*
 class UserRouteTest {
     @Test
     fun getById() = testApplication {
-        val randomUser = fakeDB.random()
+        val randomUser = usersFakeDB.random()
         val expectedBody = Json.encodeToJsonElement(
             User.serializer(), randomUser
         ).toString()
@@ -30,7 +30,7 @@ class UserRouteTest {
 
     @Test
     fun getAll() = testApplication {
-        val expected = fakeDB.associateBy { user -> user.id }
+        val expected = usersFakeDB.associateBy { user -> user.id }
         val response = client.get("/user")
         val userMap = Json.decodeFromString(
             ListSerializer(User.serializer()), response.bodyAsText()
@@ -56,7 +56,7 @@ class UserRouteTest {
             contentType(ContentType.Application.Json)
             setBody(Json.encodeToJsonElement(User.serializer(), user).toString())
         }
-        val expected = fakeDB.last()
+        val expected = usersFakeDB.last()
 
         assertEquals(
             HttpStatusCode.Created, response.status
@@ -73,7 +73,7 @@ class UserRouteTest {
 
     @Test
     fun delete() = testApplication {
-        val randomUser = fakeDB.random()
+        val randomUser = usersFakeDB.random()
         val response = client.delete("/user/${randomUser.id}")
 
         assertEquals(
@@ -85,7 +85,7 @@ class UserRouteTest {
         )
 
         assertFalse{
-            fakeDB.contains(randomUser)
+            usersFakeDB.contains(randomUser)
         }
     }
 }
